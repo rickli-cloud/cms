@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=512px" />
+    <title>CMS</title>
+    <style>
+      html {
+        min-width: 512px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module">
+      import Cms, { z } from "./src/main.ts";
+
+      async function auth(retry = false) {
+        if (retry) await new Promise((r) => setTimeout(r, 3000));
+        const input = prompt("GitHub Token");
+        return input?.length ? input : auth(true);
+      }
+
+      const cms = new Cms({
+        target: document.getElementById("app"),
+        props: {
+          backend: {
+            git: {
+              repo: "rickli-cloud",
+              owner: "rickli-cloud",
+            },
+            auth,
+          },
+          collections: [
+            {
+              type: "dir",
+              name: "Blog",
+              path: "src/content/blog",
+              actions: {
+                create: true,
+                delete: true,
+              },
+              frontmatter: {
+                title: z.string({ description: undefined }),
+                description: z.string().optional(),
+                heroImage: z.string().optional(),
+                pubDate: z.date().default(() => new Date(Date.now())),
+
+                /*  test: z.string().readonly().optional(),
+                num: z.number().default(99),
+                num1: z.number(),
+                date: z.date(),
+                a: z.object({}).readonly(),
+                str: z.string(),  */
+              },
+            },
+            {
+              type: "file",
+              name: "Pages",
+              actions: {
+                delete: true,
+              },
+              files: [
+                { path: "src/pages/datenschutz.md" },
+                { path: "src/pages/impressum.md" },
+              ],
+            },
+          ],
+        },
+      });
+    </script>
+  </body>
+</html>

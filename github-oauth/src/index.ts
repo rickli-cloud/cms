@@ -9,7 +9,14 @@ import { generateScript } from "./loginScript";
 import { AddressInfo } from "node:net";
 import { promisify } from "node:util";
 
-const applyHelmetHeaders = helmet();
+const applyHelmetHeaders = helmet({
+  contentSecurityPolicy: {
+    directives: {
+      ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+      "script-src": ["'self'", "'unsafe-inline'"],
+    },
+  },
+});
 const applyHelmetHeadersAsync = promisify(applyHelmetHeaders);
 
 const errorMessage = (code: number) =>

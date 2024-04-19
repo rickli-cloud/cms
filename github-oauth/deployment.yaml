@@ -1,0 +1,75 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cms-oauth
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cms-oauth
+  namespace: cms-oauth
+spec:
+  selector:
+    matchLabels:
+      app: cms-oauth
+  template:
+    metadata:
+      labels:
+        app: cms-oauth
+    spec:
+      containers:
+        - name: cms-oauth
+          image: ghcr.io/rickli-cloud/cms-oauth:0.0.1-pre2@sha256:7e0a1d3e5cfa1917ccba456d82173285a942121eaf607648b1f2aa7c571b3bf1 # ARM64 image
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 8000
+          env:
+            - name: OAUTH_CLIENT_ID
+              value: CHANGEME
+            - name: OAUTH_CLIENT_SECRET
+              value: CHANGEME
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cms-oauth
+  namespace: cms-oauth
+spec:
+  selector:
+    app: cms-oauth
+  ports:
+    - port: 8000
+      targetPort: 8000
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cms-oauth
+  namespace: cms-oauth
+  annotations:
+    app: cms-oauth
+    # cert-manager.io/cluster-issuer:
+spec:
+  # ingressClassName:
+  rules:
+    - host: cms-oauth.local
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: cms-oauth
+                port:
+                  number: 8000
+  # tls:
+  #   - secretName: cms-oauth-ingress.crt
+  #     hosts:
+  #       - cms-oauth.local

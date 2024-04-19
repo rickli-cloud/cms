@@ -8,12 +8,12 @@ on:
 jobs:
   cms-oauth:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
@@ -22,8 +22,8 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build Docker image
-        working-directory: ${{ github.workspace }}/github-oauth
-        run: |
-          docker build . --tag ghcr.io/rickli-cloud/cms-oauth:${{ github.ref_name }}
-          docker push ghcr.io/rickli-cloud/cms-oauth:${{ github.ref_name }}
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: ghcr.io/rickli-cloud/cms-oauth:${{ github.ref_name }}

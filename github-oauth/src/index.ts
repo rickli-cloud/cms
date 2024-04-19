@@ -1,5 +1,5 @@
 import { exchangeWebFlowCode } from "@octokit/oauth-methods";
-import helmet from "helmet";
+// import helmet from "helmet";
 import { STATUS_CODES, createServer } from "node:http";
 import { URL, URLSearchParams } from "node:url";
 
@@ -9,15 +9,15 @@ import { generateScript } from "./loginScript";
 import { AddressInfo } from "node:net";
 import { promisify } from "node:util";
 
-const applyHelmetHeaders = helmet({
-  contentSecurityPolicy: {
-    directives: {
-      ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-      "script-src": ["'self'", "'unsafe-inline'"],
-    },
-  },
-});
-const applyHelmetHeadersAsync = promisify(applyHelmetHeaders);
+// const applyHelmetHeaders = helmet({
+//   contentSecurityPolicy: {
+//     directives: {
+//       ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+//       "script-src": ["'self'", "'unsafe-inline'"],
+//     },
+//   },
+// });
+// const applyHelmetHeadersAsync = promisify(applyHelmetHeaders);
 
 const errorMessage = (code: number) =>
   /*html*/ `<html><head><title>Error ${code}</title></head><body><h1 style="border-bottom: 1px solid currentColor; text-align: center; padding: 10px;">${code} ${STATUS_CODES[code]}</h1></body></html>`;
@@ -28,7 +28,7 @@ createServer(async (req, res) => {
    * - add Content-Security-Policy to limit domains allowed to communicate with.
    */
   try {
-    await applyHelmetHeadersAsync(req, res);
+    // await applyHelmetHeadersAsync(req, res); // Messes with window.opener | needs more investigation.
 
     res.setHeader("Content-Type", "text/html; charset=UTF-8");
 

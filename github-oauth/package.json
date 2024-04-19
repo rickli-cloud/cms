@@ -1,0 +1,33 @@
+{
+  "name": "static-cms-oauth",
+  "author": "rickli-cloud",
+  "version": "0.0.1",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "LOG_LEVEL=all ACCESS_LOG_LEVEL=debug NODE_ENV=development webpack",
+    "dev:debug": "DEBUG=\"*\" LOG_LEVEL=debug NODE_ENV=development webpack",
+    "build": "webpack",
+    "start": "NODE_ENV=production node dist/index.js"
+  },
+  "devDependencies": {
+    "@tsconfig/node18": "^2.0.0",
+    "@tsconfig/node20": "^20.1.4",
+    "@types/node": "^20.1.0",
+    "@types/webpack": "^5.28.1",
+    "nodemon": "^3.1.0",
+    "nodemon-webpack-plugin": "^4.8.1",
+    "ts-loader": "^9.4.2",
+    "typescript": "^5.0.4",
+    "webpack": "^5.82.0",
+    "webpack-cli": "^5.0.2",
+    "webpack-node-externals": "^3.0.0"
+  },
+  "dependencies": {
+    "@octokit/oauth-methods": "^3.0.2",
+    "dotenv": "^16.3.1",
+    "fs": "^0.0.1-security",
+    "helmet": "^7.1.0",
+    "log4js": "^6.9.1"
+  }
+}

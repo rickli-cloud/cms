@@ -14,13 +14,7 @@
   <body>
     <div id="app"></div>
     <script type="module">
-      import Cms, { z } from "./src/main.ts";
-
-      async function auth(retry = false) {
-        if (retry) await new Promise((r) => setTimeout(r, 3000));
-        const input = prompt("GitHub Token");
-        return input?.length ? input : auth(true);
-      }
+      import Cms, { z, auth } from "./src/main.ts";
 
       const cms = new Cms({
         target: document.getElementById("app"),
@@ -30,7 +24,8 @@
               repo: "rickli-cloud",
               owner: "rickli-cloud",
             },
-            auth,
+            auth: () =>
+              auth.githubOAuth("ef878b46674dd92c73ad", auth.urlParameter()),
           },
           collections: [
             {

@@ -69,39 +69,19 @@
 
     --ring: 240 3.7% 15.9%;
   }
-}
 
-@layer utilities {
-  .grid-sm {
-    grid-template-columns: repeat(1, 1fr);
-    /* grid-template-rows: repeat(5, 1fr); */
-    grid-template-rows: auto;
-  }
-  .grid-md {
-    grid-template-areas: "content content content content content content content content nav nav";
-    grid-template-columns: repeat(8, 1fr) 111px 111px;
-    /* grid-template-rows: repeat(5, 1fr); */
-    grid-template-rows: auto;
-  }
-  main.container > *.grid-nav {
-    grid-area: nav;
-  }
-  main.container > *.grid-content {
-    grid-area: content;
-  }
-  main.container > *.grid-full {
-    @apply col-span-10;
+  table {
+    @apply overflow-x-scroll;
+
+    & th {
+      @apply whitespace-nowrap;
+    }
   }
 
-  .link {
-    @apply hover:text-blue-600 cursor-pointer;
-  }
-}
-
-@layer base {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -114,97 +94,89 @@
   main.container {
     @apply relative;
   }
+
   main.container {
-    @apply my-6 grid gap-4 grid-sm md:grid-md;
+    @apply mt-6 pb-6 grid gap-4 grid-sm md:grid-md;
   }
-  table {
-    @apply overflow-x-scroll;
+}
 
-    & th {
-      @apply whitespace-nowrap;
-    }
+@layer utilities {
+  .grid-sm {
+    grid-template-columns: 1fr;
+    grid-template-areas: "nav";
+    /* grid-template-rows: repeat(auto, 1fr); */
+    grid-template-rows: auto;
+  }
+  .grid-md {
+    grid-template-areas: "nav nav content content content content content content content content";
+    grid-template-columns: 196px 98px repeat(8, 1fr);
+    grid-template-rows: auto;
+  }
+  .grid-nav {
+    @apply col-span-full md:col-span-2;
+  }
+  .grid-content {
+    @apply col-span-full md:col-span-8;
+  }
+  .grid-full {
+    @apply col-span-full;
+  }
+  .grid-nav-end {
+    grid-area: nav-end;
+  }
+  .grid-nav-start {
+    grid-area: nav-start;
+  }
+  .grid-content-end {
+    grid-area: content-end;
+  }
+  .grid-content-start {
+    grid-area: content-start;
   }
 
-  .overflow-y-scroll::-webkit-scrollbar-track,
-  .overflow-x-scroll::-webkit-scrollbar-track,
-  .overflow-scroll::-webkit-scrollbar-track {
+  .link {
+    @apply hover:text-blue-600 cursor-pointer;
+  }
+
+  .scrolltrack-hidden {
+    scrollbar-color: #2a2a2b transparent;
+    scrollbar-width: thin;
+  }
+  .scrolltrack-hidden::-webkit-scrollbar-track {
     @apply border bg-transparent;
   }
-  .overflow-y-scroll,
   .overflow-x-scroll,
-  .overflow-scroll {
-    scrollbar-color: #2a2a2b transparent;
-    scrollbar-width: thick;
+  .overflow-y-scroll {
+    @apply scrolltrack-hidden;
   }
 }
 
 @layer components {
-  /* .minimal-prose {
-    & h1 {
-      @apply mb-3 scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl;
-    }
-
-    & h2 {
-      @apply mb-2.5 scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0;
-    }
+  .list-group {
+    @apply grid gap-1;
 
     & h3 {
-      @apply mb-2 scroll-m-20 text-2xl font-semibold tracking-tight;
+      @apply font-semibold leading-none tracking-tight;
     }
 
-    & h4 {
-      @apply mb-1.5 scroll-m-20 text-xl font-semibold tracking-tight;
+    & > a {
+      @apply first-of-type:mt-2;
     }
 
-    & h5 {
-      @apply mb-1 text-lg font-semibold;
-    }
+    & > a,
+    & > button {
+      @apply hover:bg-muted aria-disabled:!bg-transparent aria-disabled:text-muted-foreground aria-disabled:text-opacity-50 aria-disabled:cursor-default px-2 py-1 rounded-md select-none text-left flex gap-2 items-center;
 
-    & h6 {
-      @apply mb-1 text-sm font-medium leading-none;
-    }
-
-    & p {
-      @apply mb-4 text-xl text-muted-foreground;
-    }
-
-    & ul {
-      @apply mb-4 ml-6 list-disc [&>li]:mt-2;
-    }
-
-    & ol {
-      @apply mb-4 ml-6 list-decimal [&>li]:mt-2;
-    }
-
-    & blockquote {
-      @apply mb-4 border-l-2 pl-6 italic;
-    }
-
-    & > code {
-      @apply relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold;
-    }
-
-    & pre {
-      @apply mb-4 bg-muted py-3 px-4 overflow-x-scroll rounded-md;
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-
-    & table {
-      @apply w-full mb-4;
-
-      & tr {
-        @apply m-0 border-t p-0 even:bg-muted;
-      }
-      & th,
-      td {
-        @apply border px-4 py-2 text-left [&[align=center]]:text-center [&[align=right]]:text-right;
-      }
-      & th {
-        @apply font-bold;
+      & > svg {
+        @apply h-4 w-4;
       }
     }
-  } */
+
+    & > a.danger,
+    & > button.danger {
+      @apply text-red-600 aria-disabled:text-opacity-50;
+    }
+  }
 }
 
 .hljs-keyword,

@@ -8,7 +8,7 @@
   // import { Input } from "$lib/components/ui/input/index.js";
   // import { Label } from "$lib/components/ui/label/index.js";
 
-  import FileText from "svelte-radix/FileText.svelte"
+  import HamburgerMenu from "svelte-radix/HamburgerMenu.svelte"
 
   import ErrorComponent from "$lib/components/error/ErrorComponent.svelte";
   import FrontmatterForm from "$lib/components/editor/Frontmatter.svelte";
@@ -84,74 +84,58 @@
 
 </script>
 
-<Sheet.Root>
-  <Header position="fixed" containerize={false} nav={false}>
-    <div class="flex w-full items-center justify-end">
-      <Sheet.Trigger asChild let:builder>
-        <Button builders={[builder]} variant="ghost">
-          <FileText class="h-5 w-5" />
-        </Button>
-      </Sheet.Trigger>
-    </div>
-  </Header>
+<Header position="fixed" disableContainer disableNav />
 
-  {#await init()}
+{#await init()}
+  <!-- <Sheet.Content>
     <Loading />
-  {:then data}
-    <Sheet.Content side="right" class="overflow-y-scroll">
-      <Sheet.Header class="mb-3">
-        <Sheet.Title>Metadata</Sheet.Title>
-        <Sheet.Description>
-          Make changes to metadata. This includes custom fields defined in your collection config.
-        </Sheet.Description>
-      </Sheet.Header>
+  </Sheet.Content> -->
+  <Loading />
+{:then data}
+  <!-- <Sheet.Content side="right" class="overflow-y-scroll">
+    <Sheet.Header class="mb-3">
+      <Sheet.Title>Metadata</Sheet.Title>
+      <Sheet.Description>
+        Make changes to metadata. This includes custom fields defined in your collection config.
+      </Sheet.Description>
+    </Sheet.Header>
 
+    <form action="">
       {#if data?.metadataSchema}
         <FrontmatterForm data={$Metadata} schema={data?.metadataSchema} />
       {/if}
+    </form>
 
-      <!-- <div class="grid gap-4 py-4">
-        <div class="grid grid-cols-4 items-center gap-4">
-          <Label for="name" class="text-right">Name</Label>
-          <Input id="name" value="Pedro Duarte" class="col-span-3" />
-        </div>
-        <div class="grid grid-cols-4 items-center gap-4">
-          <Label for="username" class="text-right">Username</Label>
-          <Input id="username" value="@peduarte" class="col-span-3" />
-        </div>
-      </div> -->
+    <Sheet.Footer class="mt-3">
+      <Sheet.Close asChild let:builder>
+        <Button builders={[builder]} type="submit">Save changes</Button>
+      </Sheet.Close>
+    </Sheet.Footer>
+  </Sheet.Content> -->
 
-      <Sheet.Footer class="mt-3">
-        <Sheet.Close asChild let:builder>
-          <Button builders={[builder]} type="submit">Save changes</Button>
-        </Sheet.Close>
-      </Sheet.Footer>
-    </Sheet.Content>
+  <Resizable.PaneGroup direction="horizontal" class="pt-14">
+    <Resizable.Pane>
+      <Editor 
+        {Content}
+        on:scroll={(ev) => syncScroll(ev, previewNode)}
+      />
+    </Resizable.Pane>
+    
+    <Resizable.Handle />
 
-    <Resizable.PaneGroup direction="horizontal" class="pt-11">
-      <Resizable.Pane>
-        <Editor 
-          {Content}
-          on:scroll={(ev) => syncScroll(ev, previewNode)}
-        />
-      </Resizable.Pane>
-      
-      <Resizable.Handle />
-
-      <Resizable.Pane>
-        <div 
-          class="h-full overflow-y-scroll overflow-x-hidden break-word py-1 pl-2 {customStyleClass}"
-          class:minimal-prose={!customStyleClass}
-          bind:this={previewNode}
-        >
-          <Markdown {Content} />
-          <div class="h-full" />
-        </div>
-      </Resizable.Pane>
-    </Resizable.PaneGroup>
-  {:catch err}
-    <main class="container">
-      <ErrorComponent {err} />
-    </main>
-  {/await}
-</Sheet.Root>
+    <Resizable.Pane>
+      <div 
+        class="h-full overflow-y-scroll overflow-x-hidden break-word py-1 px-3 {customStyleClass}"
+        class:minimal-prose={!customStyleClass}
+        bind:this={previewNode}
+      >
+        <Markdown {Content} />
+        <div class="h-full" />
+      </div>
+    </Resizable.Pane>
+  </Resizable.PaneGroup>
+{:catch err}
+  <main class="container">
+    <ErrorComponent {err} />
+  </main>
+{/await}

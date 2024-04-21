@@ -11,7 +11,7 @@
   import Index from "$routes/index.svelte";
   import NotFound from "$routes/404.svelte"
   import Content from "$routes/content/index.svelte";
-  import Show from "$routes/content/show.svelte";
+  import History from "$routes/content/history.svelte";
   import Edit from "$routes/content/edit.svelte";
   import Commit from "$routes/content/commit.svelte";
   
@@ -19,7 +19,7 @@
     "/": Index,
     
     "/content": Content,
-    "/content/show/:ref": Show,
+    "/content/history/:ref": History,
     "/content/edit/:ref": Edit,
     "/content/commit/:ref": Commit,
 
@@ -45,7 +45,7 @@
 
 {#await init()}
   <Loading />
-{:then} 
+{:then}
   <Router {routes} />
 {:catch err}
   <main class="container">

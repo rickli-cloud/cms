@@ -3,15 +3,20 @@
   import Pencil from "svelte-radix/Pencil1.svelte"
   import Trash from "svelte-radix/Trash.svelte"
  
-  import * as Command from "$lib/components/ui/command/index.js";
-  import * as Card from "$lib/components/ui/card"
+  import * as Avatar from "$lib/components/ui/avatar";
+  // import * as Command from "$lib/components/ui/command/index";
+  // import * as Card from "$lib/components/ui/card"
+  // import * as Separator from "$lib/components/ui/separator/index";
   import { Badge } from "$lib/components/ui/badge/index";
   
   import Header from "$lib/components/site/Header.svelte";
   import Loading from "$lib/components/site/Loading.svelte";
   import ErrorComponent from "$lib/components/error/ErrorComponent.svelte";
+  import CommitTimeline from "$lib/components/commitTimeline/CommitTimeline.svelte";
   import { getCommits, getContent } from "$lib/api/repo";
   import { Ref, type CollectionFileRef, collectionFileRef } from "$lib/utils/ref";
+  import * as ToggleGroup from "$lib/components/ui/toggle-group";
+  import { formatTime } from "$lib/utils/time";
 
   export let params: { ref: string };
   let parsed: CollectionFileRef
@@ -53,22 +58,87 @@
     <Loading />
   {:then data}
   {#if data}
-    <Card.Root class="md:col-span-9">
+    <section class="grid-full">
+      <div class="flex gap-2">
+        <h2 class="text-2xl font-bold tracking-tight">
+          {data.file.name}
+        </h2>
+
+        <ToggleGroup.Root type="multiple" class="ml-auto">
+          <a 
+            href="#/content/edit/{params.ref}"
+            class="h-9 px-3 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground bg-transparent"
+          >
+            <Pencil class="h-4 w-4" />
+          </a>
+
+          <ToggleGroup.Item value="italic" aria-label="Toggle italic">
+            <Trash class="h-4 w-4 text-red-600" />
+          </ToggleGroup.Item>
+        </ToggleGroup.Root>
+      </div>
+
+      <p class="text-muted-foreground">
+        {data.file.path}
+      </p>
+    </section>
+    
+    <!-- <Separator class="grid-full" /> -->
+
+    <section class="grid-full">
+      <CommitTimeline ref={parsed} commits={data.commits} />
+      <!-- <ol class="timeline selectable mx-3 mt-4">
+        {#each data.commits as commit,index}
+        <a href="#/content/commit/{genRef(commit.sha)}">
+            <li>
+              <div class="header">
+                <Avatar.Root class="h-5 w-5 rounded-full dot">
+                  <Avatar.Image src={commit.author?.avatar_url} title={commit.author?.login} />
+                  <Avatar.Fallback>?</Avatar.Fallback>
+                </Avatar.Root>
+
+                <a 
+                  class="font-semibold hover:text-blue-600" 
+                  href={commit.author?.html_url} 
+                  target="_blank"
+                >
+                  @{commit.author?.login}
+                </a>
+
+                <p> 
+                  {commit.commit.author?.date ? formatTime(commit.commit.author.date) : "No timestamp"}
+                </p>
+              </div>
+              
+              <p>
+                {commit.commit.message}
+              </p>
+
+              {#if index === 0 || commit.commit.verification?.verified}
+                <p>
+                  {#if index === 0}
+                  <Badge variant="default">Latest</Badge>
+                  {/if}
+                  
+                  {#if commit.commit.verification?.verified}
+                  <Badge variant="positive">Signed</Badge>
+                  {/if}
+                </p>
+              {/if}
+            </li>
+          </a>
+        {/each}
+      </ol> -->
+    </section>
+
+    <!-- <Card.Root class="md:col-span-9">
       <Card.Header>
         <Card.Title>{data.file.name}</Card.Title>
         <Card.Description>{data.file.path}</Card.Description>
       </Card.Header>
+    </Card.Root> -->
 
-      <!-- <Card.Content>
-        ...
-      </Card.Content> -->
-
-      <!-- <Card.Footer>
-        <p>Card Footer</p>
-      </Card.Footer> -->
-    </Card.Root>
-
-    <Command.Root class="rounded-lg border shadow-md">
+    <!-- <Command.Root class="rounded-lg border shadow-md">
       <Command.List>
         <Command.Group heading="Actions">
           <Command.Item>
@@ -82,35 +152,11 @@
             <Trash class="mr-2 h-4 w-4" />
             <span>Delete</span>
           </Command.Item>
-
-          <!-- <Command.Item>
-            <Rocket class="mr-2 h-4 w-4" />
-            <span>Launch</span>
-          </Command.Item> -->
         </Command.Group>
-
-        <!-- <Command.Separator />
-        <Command.Group heading="Settings">
-          <Command.Item>
-            <Person class="mr-2 h-4 w-4" />
-            <span>Profile</span>
-            <Command.Shortcut>⌘P</Command.Shortcut>
-          </Command.Item>
-          <Command.Item>
-            <EnvelopeClosed class="mr-2 h-4 w-4" />
-            <span>Mail</span>
-            <Command.Shortcut>⌘B</Command.Shortcut>
-          </Command.Item>
-          <Command.Item>
-            <Gear class="mr-2 h-4 w-4" />
-            <span>Settings</span>
-            <Command.Shortcut>⌘S</Command.Shortcut>
-          </Command.Item>
-        </Command.Group> -->
       </Command.List>
-    </Command.Root>
+    </Command.Root> -->
 
-    <Card.Root class="md:col-span-8">
+    <!-- <Card.Root class="grid-content">
       <Card.Header>
         <Card.Title>Activity</Card.Title>
         <Card.Description>Recent changes displayed over time.</Card.Description>
@@ -122,7 +168,7 @@
             class="flex flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent w-full"
             href="#/content/commit/{genRef(commit.sha)}"
           >
-            <!-- on:click={() => $SelectedCommit = index} -->
+            <!-- on:click={() => $SelectedCommit = index} --
             <div class="flex w-full flex-col gap-1">
               <div class="flex items-center">
                 <div class="flex items-center gap-2">
@@ -132,7 +178,7 @@
 
                   <!-- {#if !item.read}
                     <span class="flex h-2 w-2 rounded-full bg-blue-600" />
-                  {/if} -->
+                  {/if} --
                 </div>
 
                 <div class="ml-auto text-xs">
@@ -158,7 +204,7 @@
               
               <!-- {#if commit.force?}
                 <Badge variant="destructive">Force</Badge>
-              {/if} -->
+              {/if} --
                 
               {#if commit.commit.verification?.verified}
                 <Badge variant="positive">Signed</Badge>
@@ -172,16 +218,13 @@
                   </Badge>
                 {/each}
               </div>
-            {/if} -->
+            {/if} --
           </a>
         {/each}
       </Card.Content>
-      <!-- <Card.Footer>
-        <p>Card Footer</p>
-      </Card.Footer> -->
-    </Card.Root>
+    </Card.Root> -->
 
-    <div class="break-words overflow-x-hidden md:col-span-10">{JSON.stringify(data, null, 2)}</div>
+    <!-- <div class="break-words overflow-x-hidden grid-full">{JSON.stringify(data, null, 2)}</div> -->
   {:else}
     <div>404</div>
   {/if}

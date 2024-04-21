@@ -1,22 +1,45 @@
 <script lang="ts">
   import { createTable, Render, Subscribe, createRender } from "svelte-headless-table";
-  import { addPagination } from "svelte-headless-table/plugins";
+  import { addPagination, addSelectedRows } from "svelte-headless-table/plugins";
   import type { Writable } from "svelte/store";
 
-  import DataTableActions from "./TableActions.svelte";
   import * as Table from "$lib/components/ui/table";
   import { Button } from "$lib/components/ui/button";
+
+  // import DataTableActions from "./TableActions.svelte";
   import type { InternalContentData } from "$lib/api/repo";
   import { formatBytes } from "$lib/utils/bytes";
-  import { Ref, type CollectionFileRef } from "$lib/utils/ref";
+  // import { Ref, type CollectionFileRef } from "$lib/utils/ref";
+  import CellCheckbox from "./CellCheckbox.svelte";
+  import { createEventDispatcher } from "svelte";
  
   export let Data: Writable<InternalContentData[]>
  
   const table = createTable(Data, {
     page: addPagination(),
+    select: addSelectedRows(),
   });
+
+  const dispatch = createEventDispatcher<{ select: Record<string, boolean> }>()
  
   const columns = table.createColumns([
+    table.column({
+      header: (_, { pluginStates }) => {
+        const { allPageRowsSelected } = pluginStates.select;
+        return createRender(CellCheckbox, {
+          checked: allPageRowsSelected
+        });
+      },
+      accessor: "selected",
+      cell: ({ row }, { pluginStates }) => {
+        const { getRowState } = pluginStates.select;
+        const { isSelected } = getRowState(row);
+ 
+        return createRender(CellCheckbox, {
+          checked: isSelected
+        });
+      },
+    }),
     table.column({
       accessor: "collection",
       header: "Collection",
@@ -46,17 +69,20 @@
         return formatted;
       },
     }), */
-    table.column({
+    /* table.column({
       accessor: ({ name, collection, path }) => new Ref({ name, collection, path } as CollectionFileRef).toString(),
       header: "",
       cell: ({ value }) => {
         return createRender(DataTableActions, { ref: value });
       },
-    }), 
+    }),  */
   ]);
  
-  const { headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates } = table.createViewModel(columns);
+  const { headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates, rows } = table.createViewModel(columns);
   const { hasNextPage, hasPreviousPage, pageIndex, pageCount, pageSize } = pluginStates.page;
+  const { selectedDataIds } = pluginStates.select;
+
+  selectedDataIds.subscribe((selectedDataIds) => dispatch("select", selectedDataIds))
 </script>
 
 <Table.Root {...$tableAttrs}>
@@ -81,10 +107,11 @@
       </Subscribe>
     {/each}
   </Table.Header>
+  
   <Table.Body {...$tableBodyAttrs}>
     {#each $pageRows as row (row.id)}
       <Subscribe rowAttrs={row.attrs()} let:rowAttrs>
-        <Table.Row {...rowAttrs}>
+        <Table.Row {...rowAttrs} data-state={$selectedDataIds[row.id] && "selected"}>
           {#each row.cells as cell (cell.id)}
             <Subscribe attrs={cell.attrs()} let:attrs>
               <Table.Cell {...attrs}>
@@ -109,6 +136,11 @@
 </Table.Root>
 
 <div class="flex items-center gap-x-4 py-4">
+  <div class="flex-1 text-sm text-muted-foreground">
+    {Object.keys($selectedDataIds).length} of{" "}
+    {$rows.length} row(s) selected.
+  </div>
+
   <p class="text-sm text-muted-foreground">
     {$Data.length} items | Page {$pageIndex + 1} of {$pageCount}
   </p>

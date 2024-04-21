@@ -12,6 +12,7 @@ export interface ContentData {
 
 export interface InternalContentData extends ContentData {
   collection: string;
+  selected?: boolean;
 }
 
 export async function getContent(

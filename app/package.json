@@ -26,9 +26,10 @@
     "vite": "^5.2.0"
   },
   "dependencies": {
+    "@octokit/oauth-methods": "^5.1.2",
     "@octokit/request-error": "^6.1.0",
     "@octokit/rest": "^20.1.0",
-    "bits-ui": "^0.21.2",
+    "bits-ui": "^0.21.4",
     "clsx": "^2.1.0",
     "cmdk-sv": "^0.0.17",
     "formsnap": "^1.0.0",

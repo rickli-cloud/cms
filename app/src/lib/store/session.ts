@@ -52,22 +52,21 @@ export async function initSession() {
 
   const token = storage.location.getItem(storage.git_token_key);
 
-  if (force_auth || token) {
-    await initUser(token);
-  } else {
-    initApi(git);
-  }
+  if (force_auth || token) await initUser(token);
+  else initApi(git);
 
   console.timeEnd("initSession");
 }
 
-export async function endSession() {
+export function endSession(reload: boolean = true) {
   console.time("endSession");
 
   const { session: storage } = get(Storage);
-  storage.location.removeItem(storage.git_token_key);
 
+  storage.location.removeItem(storage.git_token_key);
   User.set(undefined);
 
   console.timeEnd("endSession");
+
+  if (reload) window.location.reload();
 }

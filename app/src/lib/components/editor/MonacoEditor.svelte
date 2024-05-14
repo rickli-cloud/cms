@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { mode } from "mode-watcher";
   import { get, type Writable } from "svelte/store";
   import { createEventDispatcher, onMount } from "svelte";
   import editorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
@@ -6,22 +7,21 @@
   // import cssWorker from "monaco-editor/esm/vs/language/css/css.worker?worker";
   // import htmlWorker from "monaco-editor/esm/vs/language/html/html.worker?worker";
   // import tsWorker from "monaco-editor/esm/vs/language/typescript/ts.worker?worker";
-  import { mode } from "mode-watcher";
+  import type { editor as Editor } from "monaco-editor/esm/vs/editor/editor.api"
 
   import Loading from "$lib/components/site/Loading.svelte";
   import { themes } from "$lib/config/monacoThemes";
-  import type { editor } from "monaco-editor";
+  import ErrorComponent from "../error/ErrorComponent.svelte";
 
   export let Content: Writable<string>;
-  export let language = "markdown";
+  export let language: string = "markdown";
   export let readOnly: boolean = false;
 
   const dispatch = createEventDispatcher()
   const observer = new ResizeObserver(resizeEditor)
 
   let editorEl: HTMLDivElement;
-  let Monaco: typeof import("monaco-editor");
-  let editor: editor.IStandaloneCodeEditor;
+  let editor: Editor.IStandaloneCodeEditor;
 
   mode.subscribe((currentMode) => {
     editor?.updateOptions({ "theme": currentMode === "dark" ? "customDark" : "customLight" })
@@ -44,14 +44,12 @@
     },
   };
 
-  async function loadEditor() {
-    Monaco = Monaco 
-      ? Monaco
-      : await import("monaco-editor")
+  async function init() {
+    const { editor: Editor} = await import("monaco-editor/esm/vs/editor/editor.api")
     
-    Monaco.editor.defineTheme("customDark", themes.customDark)
+    Editor.defineTheme("customDark", themes.customDark)
 
-    editor = Monaco.editor.create(editorEl, {
+    editor = Editor.create(editorEl, {
       value: get(Content),
       language,
       theme: get(mode) === "dark" ? "customDark" : "customLight",
@@ -97,6 +95,8 @@
 
 <div bind:this={editorEl} class="h-full w-full" />
 
-{#await loadEditor()}
+{#await init()}
   <Loading />
+{:catch err}
+  <ErrorComponent {err} />
 {/await}

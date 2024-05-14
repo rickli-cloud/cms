@@ -96,14 +96,14 @@
   {#await init()}
    <Loading />
   {:then}
-    <section class="grid-full md:!col-span-1 md:grid-nav-end list-group mb-3">
+    <section class="grid-full sm:!col-span-1 md:grid-nav-end list-group mb-3">
       <h3 >
         Filters
       </h3>
       
     </section>
     
-    <section class="grid-full md:!col-span-1 list-group mb-3">
+    <section class="grid-full sm:!col-span-1 list-group mb-3">
       <h3>
         Actions
       </h3>

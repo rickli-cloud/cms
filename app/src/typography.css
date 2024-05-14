@@ -79,6 +79,21 @@
   }
 }
 
+table.table {
+  @apply w-[calc(100%-12px)] [&:not(:first-child)]:mt-4;
+
+  & tr {
+    @apply m-0 border-t p-0 even:bg-muted;
+  }
+  & th,
+  td {
+    @apply border px-4 py-2 text-left [&[align=center]]:text-center [&[align=right]]:text-right;
+  }
+  & th {
+    @apply font-bold;
+  }
+}
+
 /* .cms-typography {
   & h1 {
     @apply mb-3 scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl;

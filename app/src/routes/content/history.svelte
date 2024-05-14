@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { writable } from "svelte/store";
+  // import { writable } from "svelte/store";
   import Pencil from "svelte-radix/Pencil1.svelte"
   import Trash from "svelte-radix/Trash.svelte"
  
-  import * as Avatar from "$lib/components/ui/avatar";
+  // import * as Avatar from "$lib/components/ui/avatar";
   // import * as Command from "$lib/components/ui/command/index";
   // import * as Card from "$lib/components/ui/card"
   // import * as Separator from "$lib/components/ui/separator/index";
-  import { Badge } from "$lib/components/ui/badge/index";
+  // import { Badge } from "$lib/components/ui/badge/index";
   
   import Header from "$lib/components/site/Header.svelte";
   import Loading from "$lib/components/site/Loading.svelte";
@@ -16,21 +16,19 @@
   import { getCommits, getContent } from "$lib/api/repo";
   import { Ref, type CollectionFileRef, collectionFileRef } from "$lib/utils/ref";
   import * as ToggleGroup from "$lib/components/ui/toggle-group";
-  import { formatTime } from "$lib/utils/time";
+  // import { formatTime } from "$lib/utils/time";
 
   export let params: { ref: string };
   let parsed: CollectionFileRef
+  
+  try {
+    if (!params.ref) throw new Error("Expected ref.");
+    parsed = collectionFileRef.parse(Ref.parse(params.ref));
+  } catch (err) {
+    console.error("Error while parsing collection file:", err);
+  }
 
   async function init() {
-    if (!params.ref) throw new Error("Expected ref.");
-
-    try {
-      parsed = collectionFileRef.parse(Ref.parse(params.ref));
-    } catch (err) {
-      console.error("Error while parsing collection file:", err);
-      return undefined;
-    }
-
     const file = await getContent(parsed.path);
 
     if (Array.isArray(file) || file.type !== "file") {
@@ -54,81 +52,39 @@
 <Header />
 
 <main class="container">
+  {#if parsed}
+    <section class="grid-full">
+      <div class="flex gap-2">
+        <h2 class="text-2xl font-bold tracking-tight">
+          {parsed.name}
+        </h2>
+        
+        <ToggleGroup.Root type="multiple" class="ml-auto">
+          <a 
+          href="#/content/edit/{params.ref}"
+          class="h-9 px-3 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground bg-transparent"
+          >
+          <Pencil class="h-4 w-4" />
+        </a>
+        
+        <ToggleGroup.Item value="italic" aria-label="Toggle italic">
+          <Trash class="h-4 w-4 text-red-600" />
+        </ToggleGroup.Item>
+      </ToggleGroup.Root>
+    </div>
+    
+    <p class="text-muted-foreground">
+      {parsed.path}
+    </p>
+  </section>
+  {/if}
+
   {#await init()}
     <Loading />
   {:then data}
   {#if data}
     <section class="grid-full">
-      <div class="flex gap-2">
-        <h2 class="text-2xl font-bold tracking-tight">
-          {data.file.name}
-        </h2>
-
-        <ToggleGroup.Root type="multiple" class="ml-auto">
-          <a 
-            href="#/content/edit/{params.ref}"
-            class="h-9 px-3 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground bg-transparent"
-          >
-            <Pencil class="h-4 w-4" />
-          </a>
-
-          <ToggleGroup.Item value="italic" aria-label="Toggle italic">
-            <Trash class="h-4 w-4 text-red-600" />
-          </ToggleGroup.Item>
-        </ToggleGroup.Root>
-      </div>
-
-      <p class="text-muted-foreground">
-        {data.file.path}
-      </p>
-    </section>
-    
-    <!-- <Separator class="grid-full" /> -->
-
-    <section class="grid-full">
       <CommitTimeline ref={parsed} commits={data.commits} />
-      <!-- <ol class="timeline selectable mx-3 mt-4">
-        {#each data.commits as commit,index}
-        <a href="#/content/commit/{genRef(commit.sha)}">
-            <li>
-              <div class="header">
-                <Avatar.Root class="h-5 w-5 rounded-full dot">
-                  <Avatar.Image src={commit.author?.avatar_url} title={commit.author?.login} />
-                  <Avatar.Fallback>?</Avatar.Fallback>
-                </Avatar.Root>
-
-                <a 
-                  class="font-semibold hover:text-blue-600" 
-                  href={commit.author?.html_url} 
-                  target="_blank"
-                >
-                  @{commit.author?.login}
-                </a>
-
-                <p> 
-                  {commit.commit.author?.date ? formatTime(commit.commit.author.date) : "No timestamp"}
-                </p>
-              </div>
-              
-              <p>
-                {commit.commit.message}
-              </p>
-
-              {#if index === 0 || commit.commit.verification?.verified}
-                <p>
-                  {#if index === 0}
-                  <Badge variant="default">Latest</Badge>
-                  {/if}
-                  
-                  {#if commit.commit.verification?.verified}
-                  <Badge variant="positive">Signed</Badge>
-                  {/if}
-                </p>
-              {/if}
-            </li>
-          </a>
-        {/each}
-      </ol> -->
     </section>
 
     <!-- <Card.Root class="md:col-span-9">

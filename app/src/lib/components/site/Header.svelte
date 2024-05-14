@@ -1,15 +1,14 @@
 <script lang="ts">
-  import { HamburgerMenu } from "svelte-radix";
+  import { Enter, Exit, HamburgerMenu } from "svelte-radix";
 
   import * as Avatar from "$lib/components/ui/avatar";
   import * as Sheet from "$lib/components/ui/sheet";
-  import {Button} from "$lib/components/ui/button/index";
+  import * as AlertDialog from "$lib/components/ui/alert-dialog";
+  import { Button } from "$lib/components/ui/button";
   
-  import { User } from "$lib/store/session";
-  import Separator from "../ui/separator/separator.svelte";
+  import { User, endSession, initUser } from "$lib/store/session";
 
   export let position: "sticky" | "fixed" = "sticky"
-
   export let disableContainer: boolean = false
   export let disableNav: boolean = false
   export let disableSheet: boolean = false
@@ -17,40 +16,60 @@
 </script>
 
 <header 
+  class="h-12 top-0 z-40 shadow-md w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
   class:sticky={position === "sticky"}
   class:fixed={position === "fixed"}
 >
   <Sheet.Root>
     <div 
+      class="h-full flex items-center gap-8"
       class:container={!disableContainer}
+      class:max-w-screen-2xl={!disableContainer}
       class:px-8={disableContainer}
     >
-      <a href="#/" class="font-bold">
-        CMS
-      </a>
+      <nav class="site">
+        <a 
+          href="#/"
+          class="font-bold"
+          class:!text-foreground={/^(#\/)?$/i.test(document.location.hash)}
+        >
+          CMS
+        </a>
 
-      {#if !disableNav}
-        <nav class="site">
-          <!-- <a  href="#/" class:!text-foreground={/^$|^#\/$/.test(document.location.hash)}>Dashboard</a> -->
-          <a  href="#/content" class:!text-foreground={/^#\/content/i.test(document.location.hash)}>Content</a>
-          <a  href="#/media" class:!text-foreground={/^#\/media/i.test(document.location.hash)}>Media</a>
-        </nav>
-      {/if}
+        {#if !disableNav}
+          <slot name="nav">
+            <a 
+              href="#/content"
+              class:!text-foreground={/^#\/content/i.test(document.location.hash)}
+            >
+              Content
+            </a>
+            <a 
+              href="#/media"
+              class:!text-foreground={/^#\/media/i.test(document.location.hash)}
+            >
+              Media
+            </a>
+          </slot>
+        {/if}
+      </nav>
 
       <slot />
 
       {#if !disableSheet}
-
         <Sheet.Trigger asChild let:builder>
           <Button builders={[builder]} variant="ghost" size="icon" class="ml-auto">
             <HamburgerMenu class="h-5 w-5" />
           </Button>
         </Sheet.Trigger>
       {/if}
-
     </div>
     
-    <Sheet.Content side="right" class="overflow-y-scroll scrolltrack-hidden" style="-ms-overflow-style: none !important; scrollbar-width: none !important;">
+    <Sheet.Content 
+      side="right" 
+      class="overflow-y-scroll scrolltrack-hidden" 
+      style="-ms-overflow-style: none !important; scrollbar-width: none !important;"
+    >
       {#if !disableProfile}
         <div class="h-16 bg-muted -m-6 mb-0" />
         <!-- <Separator /> -->
@@ -61,46 +80,72 @@
             <Avatar.Fallback>?</Avatar.Fallback>
           </Avatar.Root>
 
-          <div class="grid grid-rows-2 [&>*]:my-1">
+          <div class="grid grid-rows-2 gap-1">
             <p class="text-lg font-semibold self-end">
-              {$User?.name || "" + $User?.login}
+              {$User?.name || $User?.login || "Anonymous"}
             </p>
+
+            <div class="flex gap-2 items-center pb-4">
+              {#if $User}                
+                <AlertDialog.Root>
+                  <AlertDialog.Trigger asChild let:builder>
+                    <Button 
+                      class="text-muted-foreground hover:text-current !p-0 gap-1 h-auto" 
+                      variant="noStyle"
+                      builders={[builder]}
+                    >
+                      <Exit class="h-4 w-4" />
+                      Exit
+                    </Button>
+                  </AlertDialog.Trigger>
+
+                  <AlertDialog.Content>
+                    <AlertDialog.Header>
+                      <AlertDialog.Title>
+                        Are you absolutely sure?
+                      </AlertDialog.Title>
+                      <AlertDialog.Description>
+                        This will end your session and will require another exchange with the identity provider for another session. 
+                      </AlertDialog.Description>
+                    </AlertDialog.Header>
+                    <AlertDialog.Footer>
+                      <AlertDialog.Cancel>
+                        Cancel
+                      </AlertDialog.Cancel>
+
+                      <AlertDialog.Action on:click={() => endSession()}>
+                        Continue
+                      </AlertDialog.Action>
+                    </AlertDialog.Footer>
+                  </AlertDialog.Content>
+                </AlertDialog.Root>
+              {:else}
+                <Button 
+                  class="text-muted-foreground hover:text-current !p-0 gap-1 h-auto" 
+                  variant="noStyle"
+                  on:click={() => initUser().catch(console.error)}
+                >
+                  <Enter class="h-4 w-4" />
+                  Login
+                </Button>
+              {/if}
+
+              <!-- <button 
+                class="text-muted-foreground hover:text-current inline-flex items-center gap-1.5 my-0.5"
+              >
+                <Exit class="h-4 w-4" />
+                Exit
+              </button> -->
+            </div>
           </div>
         </div>
-
-        <!-- <div class="flex gap-2.5 items-center">
-          <Avatar.Root class="h-8 w-8 rounded-sm">
-            <Avatar.Image src={$User?.avatar_url} alt="@{$User?.login}" title={$User?.login} />
-            <Avatar.Fallback>?</Avatar.Fallback>
-          </Avatar.Root>
-
-          <p class="text-lg font-semibold">@{$User?.login}</p>
-        </div> -->
       {/if}
-
-      <!-- <Sheet.Header class="mb-3">
-        <Sheet.Title>Profile</Sheet.Title>
-        <Sheet.Description>
-          Make changes to metadata. This includes custom fields defined in your collection config.
-        </Sheet.Description>
-      </Sheet.Header> -->
-    
     </Sheet.Content>
-
   </Sheet.Root>
 </header>
 
 
 <style scoped lang="postcss">
-  header {
-    @apply border-b h-11 top-0 z-40 shadow-md w-full;
-    background-color: hsl(var(--background) / var(--tw-bg-opacity));
-
-    & > div {
-      @apply h-full flex items-center gap-8;
-    }
-  }
-
   nav.site {
     @apply flex flex-nowrap items-center gap-6 text-sm;
 

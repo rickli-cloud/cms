@@ -96,14 +96,20 @@
   }
 
   main.container {
-    @apply mt-6 pb-6 grid gap-4 grid-sm md:grid-md;
+    @apply mt-6 pb-6 grid gap-4 grid-default sm:grid-sm md:grid-md;
   }
 }
 
 @layer utilities {
-  .grid-sm {
+  .grid-default {
     grid-template-columns: 1fr;
     grid-template-areas: "nav";
+    /* grid-template-rows: repeat(auto, 1fr); */
+    grid-template-rows: auto;
+  }
+  .grid-sm {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: "nav content";
     /* grid-template-rows: repeat(auto, 1fr); */
     grid-template-rows: auto;
   }

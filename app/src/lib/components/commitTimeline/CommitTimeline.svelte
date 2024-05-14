@@ -1,12 +1,11 @@
 <script lang="ts">
-  import type { getCommits } from "$lib/api/repo";
-
   import * as Avatar from "$lib/components/ui/avatar";
   import { Badge } from "$lib/components/ui/badge/index";
-
+  
   import { Ref, type CollectionFileRef } from "$lib/utils/ref";
   import { formatTime } from "$lib/utils/time";
-
+  import type { getCommits } from "$lib/api/repo";
+  
   export let commits: Awaited<ReturnType<typeof getCommits>>
   export let ref: CollectionFileRef | Record<string, any>
 

@@ -1,8 +1,11 @@
 {
-  "name": "svelte-vite-lib",
-  "private": true,
-  "version": "0.0.0",
+  "name": "@lucarickli/cms",
+  "private": false,
+  "version": "0.0.0-pre5",
   "type": "module",
+  "main": "dist/index.umd.js",
+  "module": "dist/index.es.js",
+  "types": "dist/main.d.ts",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -16,6 +19,7 @@
     "@types/node": "^20.12.4",
     "autoprefixer": "^10.4.19",
     "cssnano": "^6.1.2",
+    "i": "^0.3.7",
     "postcss": "^8.4.38",
     "svelte": "^4.2.12",
     "svelte-check": "^3.6.7",
@@ -23,13 +27,14 @@
     "tailwindcss": "^3.4.3",
     "tslib": "^2.6.2",
     "typescript": "^5.2.2",
-    "vite": "^5.2.0"
+    "vite": "^5.2.0",
+    "vite-plugin-dts": "^3.9.1"
   },
   "dependencies": {
     "@octokit/oauth-methods": "^5.1.2",
     "@octokit/request-error": "^6.1.0",
     "@octokit/rest": "^20.1.0",
-    "bits-ui": "^0.21.4",
+    "bits-ui": "^0.21.7",
     "clsx": "^2.1.0",
     "cmdk-sv": "^0.0.17",
     "formsnap": "^1.0.0",

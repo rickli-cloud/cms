@@ -54,6 +54,7 @@
               <Avatar.Image src={contributor.avatar_url} alt={contributor.login} />
               <Avatar.Fallback>{new RegExp("^[a-zA-Z0-9]{2}").exec(contributor.login || "")?.[0].toUpperCase()}</Avatar.Fallback>
             </Avatar.Root>
+
             <div>
               <a class="text-sm font-medium leading-none hover:text-blue-600" href={contributor.html_url}>@{contributor.login}</a>
               <p class="text-sm text-muted-foreground">Contributions: {contributor.contributions}</p>
@@ -88,9 +89,9 @@
     {/if}
 
     {#if data.commits}
-      <div class="grid-full md:!grid-content md:!row-span-12">
+      <section class="grid-full md:!grid-content md:!row-span-12">
         <CommitTimeline ref={{}} commits={data.commits} />
-      </div>
+      </section>
     {/if}
 
     <div></div>

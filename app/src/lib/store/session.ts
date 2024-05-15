@@ -1,7 +1,7 @@
 import { get, writable } from "svelte/store";
 import { RequestError } from "@octokit/request-error";
 
-import { Backend, Storage } from "./config";
+import { Backend } from "./config";
 import { CustomError } from "$lib/utils/error";
 import { getUser, type UserData } from "$lib/api/user";
 import { initApi } from "$lib/api";
@@ -14,13 +14,12 @@ export async function initUser(token?: string | null) {
   console.time("initUser");
 
   const { auth, git } = get(Backend);
-  const { session: storage } = get(Storage);
 
-  if (!token) storage.location.getItem(storage.git_token_key);
+  if (!token) sessionStorage.location.getItem(sessionStorage.git_token_key);
 
   if (!token) {
     token = await auth();
-    storage.location.setItem(storage.git_token_key, token);
+    sessionStorage.location.setItem(sessionStorage.git_token_key, token);
   }
 
   initApi(git, token);
@@ -48,9 +47,8 @@ export async function initSession() {
   console.time("initSession");
 
   const { force_auth, git } = get(Backend);
-  const { session: storage } = get(Storage);
 
-  const token = storage.location.getItem(storage.git_token_key);
+  const token = sessionStorage.location.getItem(sessionStorage.git_token_key);
 
   if (force_auth || token) await initUser(token);
   else initApi(git);
@@ -61,9 +59,7 @@ export async function initSession() {
 export function endSession(reload: boolean = true) {
   console.time("endSession");
 
-  const { session: storage } = get(Storage);
-
-  storage.location.removeItem(storage.git_token_key);
+  sessionStorage.location.removeItem(sessionStorage.git_token_key);
   User.set(undefined);
 
   console.timeEnd("endSession");

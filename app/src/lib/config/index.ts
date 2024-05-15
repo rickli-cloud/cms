@@ -1,6 +1,6 @@
 import { z } from "zod";
 import backend from "./backend";
-import storage from "./storage";
+// import storage from "./storage";
 import collection, {
   type File,
   type Folder,
@@ -9,14 +9,14 @@ import collection, {
 
 export const config = z.object({
   collections: z.array(collection),
-  storage: storage.default({}),
+  // storage: storage.default({}),
   backend,
 });
 
 export namespace Config {
   export type Full = z.infer<typeof config>;
   export type Backend = z.infer<typeof backend>;
-  export type Storage = z.infer<typeof storage>;
+  // export type Storage = z.infer<typeof storage>;
 
   export namespace Collection {
     export type File = z.infer<typeof File>;

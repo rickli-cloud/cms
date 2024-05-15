@@ -28,12 +28,12 @@
 
   export let backend: Config.Full["backend"];
   export let collections: Config.Full["collections"];
-  export let storage: Config.Full["storage"];
+  // export let storage: Config.Full["storage"];
 
   async function init() {
     // throw new TypeError("test")
 
-    await initConfig({ backend, collections, storage })
+    await initConfig({ backend, collections, /* storage */ })
     await initSession()
 
     // await new Promise(r => setTimeout(r, 9999999999))

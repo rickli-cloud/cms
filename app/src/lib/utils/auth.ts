@@ -1,9 +1,13 @@
+import type { AuthMethods } from "$lib/config/backend";
 import { getWebFlowAuthorizationUrl } from "@octokit/oauth-methods";
+import { z } from "zod";
 
 /**
  * Top level function! Grabs token from url parameter named token. Also checks hash for token!
  */
-export function urlParameter(): string | undefined {
+export const urlParameter: z.infer<typeof AuthMethods.urlParameter> = ():
+  | string
+  | undefined => {
   function handleParams(search: string, isHash?: boolean): string | undefined {
     const params = new URLSearchParams(search);
 
@@ -39,33 +43,38 @@ export function urlParameter(): string | undefined {
     true
   );
   if (hashResult) return hashResult;
-}
+};
 
-export async function prompt(
+/**
+ * Simple prompt function with retry.
+ */
+export const simplePrompt: z.infer<typeof AuthMethods.prompt> = async (
   token?: string,
   allowRetry: boolean = true,
   retryDelay: number = 5000,
   isRetry?: boolean
-): Promise<string | undefined> {
+): Promise<string> => {
+  if (token) return Promise.resolve(token);
+
   if (allowRetry && isRetry) {
     await new Promise((r) => setTimeout(r, retryDelay));
   }
 
-  const input = await prompt("GitHub Token");
+  const input = prompt("GitHub Token");
 
   return input?.length || !allowRetry
-    ? input
-    : prompt(token, allowRetry, retryDelay, true);
-}
+    ? (input as string)
+    : simplePrompt(token, allowRetry, retryDelay, true);
+};
 
 /**
  * Requires a self hosted github-oauth server and a github oauth app.
  */
-export async function githubOAuth(
+export const githubOAuth: z.infer<typeof AuthMethods.githubOAuth> = (
   clientId: string,
   token?: string
-): Promise<string> {
-  if (token) return token;
+): Promise<string> => {
+  if (token) return Promise.resolve(token);
 
   const { url, state } = getWebFlowAuthorizationUrl({
     clientType: "oauth-app",
@@ -88,4 +97,10 @@ export async function githubOAuth(
       }
     });
   });
-}
+};
+
+export default {
+  urlParameter,
+  prompt: simplePrompt,
+  githubOAuth,
+};

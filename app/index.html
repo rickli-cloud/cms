@@ -38,10 +38,13 @@
                 delete: true,
               },
               frontmatter: {
-                title: z.string({ description: undefined }),
-                description: z.string().optional(),
-                heroImage: z.string().optional(),
-                pubDate: z.date().default(() => new Date(Date.now())),
+                type: "zod",
+                records: {
+                  title: z.string({ description: undefined }),
+                  description: z.string().optional(),
+                  heroImage: z.string().optional(),
+                  pubDate: z.date().default(() => new Date(Date.now())),
+                },
 
                 /*  test: z.string().readonly().optional(),
                 num: z.number().default(99),

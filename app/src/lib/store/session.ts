@@ -5,11 +5,12 @@ import { Backend /* Storage */ } from "./config";
 import { CustomError } from "$lib/utils/error";
 import { getUser, type UserData } from "$lib/api/user";
 import { initApi } from "$lib/api";
+import Auth from "$lib/utils/auth";
 
 export const User = writable<UserData | undefined>(undefined);
-export const tokenStorageKey = "ODUsMjQ5LDIzOCwxNjUsMTYwLDk2LDE1MiwMTM";
+// User.subscribe(console.log);
 
-User.subscribe(console.log);
+export const storageKey = "cms:session:token";
 
 export async function initUser(token?: string | null) {
   console.time("initUser");
@@ -17,11 +18,21 @@ export async function initUser(token?: string | null) {
   const { auth, git } = get(Backend);
   // const { session: storage } = get(Storage);
 
-  if (!token) sessionStorage.location.getItem(tokenStorageKey);
+  if (!token) {
+    token = sessionStorage.getItem(storageKey);
+  }
 
   if (!token) {
-    token = await auth();
-    sessionStorage.location.setItem(tokenStorageKey, token);
+    token = await (typeof auth === "function" ? auth : new Function(auth))(
+      Auth
+    );
+    if (token) sessionStorage.setItem(storageKey, token);
+  }
+
+  if (!token) {
+    throw new Error(
+      "Failed to grab auth token :( Try refreshing the page to try again."
+    );
   }
 
   initApi(git, token);
@@ -51,7 +62,7 @@ export async function initSession() {
   const { force_auth, git } = get(Backend);
   // const { session: storage } = get(Storage);
 
-  const token = sessionStorage.location.getItem(tokenStorageKey);
+  const token = sessionStorage.getItem(storageKey);
 
   if (force_auth || token) await initUser(token);
   else initApi(git);
@@ -64,7 +75,7 @@ export function endSession(reload: boolean = true) {
 
   // const { session: storage } = get(Storage);
 
-  sessionStorage.location.removeItem(tokenStorageKey);
+  sessionStorage.removeItem(storageKey);
   User.set(undefined);
 
   console.timeEnd("endSession");

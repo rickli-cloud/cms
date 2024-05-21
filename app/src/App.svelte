@@ -26,9 +26,9 @@
     "*": NotFound
   }
 
-  export let backend: Config.Full["backend"];
-  export let collections: Config.Full["collections"];
-  // export let storage: Config.Full["storage"];
+  export let backend: Config.Backend;
+  export let collections: Config.Collections;
+  // export let storage: Config.Storage;
 
   async function init() {
     // throw new TypeError("test")

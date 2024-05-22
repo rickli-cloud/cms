@@ -1,7 +1,9 @@
-import "./app.css";
+import "./app.css"; // only works for development.
 
-export { default as Cms } from "./App.svelte";
-export * as auth from "$lib/utils/auth";
-export { z } from "zod";
+import { z } from "zod";
+import Cms from "./App.svelte";
+import auth from "./lib/utils/auth";
 
-export type { Config as config, FullConfig as Config } from "$lib/config";
+import type { Config as config, FullConfig as Config } from "./lib/config";
+
+export { Cms, auth, z, type Config, type config };

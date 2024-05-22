@@ -1,7 +1,7 @@
 {
   "name": "@lucarickli/jamstack-cms",
   "private": false,
-  "version": "0.0.1-pre7",
+  "version": "0.0.1-pre8",
   "type": "module",
   "main": "dist/index.umd.js",
   "module": "dist/index.es.js",

@@ -25,8 +25,8 @@
               repo: "rickli-cloud",
               owner: "rickli-cloud",
             },
-            auth: () =>
-              auth.githubOAuth("ef878b46674dd92c73ad", auth.urlParameter()),
+            // auth: () => auth.githubOAuth("ef878b46674dd92c73ad", auth.urlParameter()),
+            auth: 'return auth.githubOAuth("ef878b46674dd92c73ad", auth.urlParameter())',
           },
           collections: [
             {

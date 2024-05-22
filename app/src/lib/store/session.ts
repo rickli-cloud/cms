@@ -23,9 +23,7 @@ export async function initUser(token?: string | null) {
   }
 
   if (!token) {
-    token = await (typeof auth === "function" ? auth : new Function(auth))(
-      Auth
-    );
+    token = await auth(Auth);
     if (token) sessionStorage.setItem(storageKey, token);
   }
 

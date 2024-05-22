@@ -48,6 +48,10 @@ export const Backend = {
     .and(BaseBackend),
 };
 
+const AsyncFunction: typeof Function = Object.getPrototypeOf(
+  async function () {}
+).constructor;
+
 export function transformBackendConfig(
   cfg: Config.Backend
 ): InternalConfig.Backend {
@@ -56,6 +60,6 @@ export function transformBackendConfig(
     auth:
       typeof cfg.auth === "function"
         ? cfg.auth
-        : (new Function(cfg.auth) as z.infer<typeof AuthFunction>),
+        : (new AsyncFunction("auth", cfg.auth) as z.infer<typeof AuthFunction>),
   };
 }

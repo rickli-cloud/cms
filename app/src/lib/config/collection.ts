@@ -3,18 +3,8 @@ import { zodToJsonSchema } from "zod-to-json-schema";
 import type { Config, InternalConfig } from ".";
 
 export const Frontmatter = {
-  zod: z.object({
-    type: z.literal("zod"),
-    records: z.record(z.string(), z.instanceof(z.ZodType)),
-  }),
-  json: z.object({
-    type: z.literal("json"),
-    schema: z.any(), // any better way to handle this?
-  }),
-  get default() {
-    return z.union([this.zod, this.json]);
-  },
-  internal: z.any(),
+  default: z.record(z.any()),
+  internal: z.record(z.record(z.unknown())),
 };
 
 const Base = z.object({
@@ -79,6 +69,7 @@ export const Folder = {
 export const Collection = {
   internal: z.union([Folder.internal, File.internal]),
   default: z.union([Folder.default, File.default]),
+  serializable: z.union([Folder.default, File.default]),
 };
 
 export function transformCollectionConfig(
@@ -86,15 +77,19 @@ export function transformCollectionConfig(
 ): InternalConfig.Collections {
   return cfg.map((i) => ({
     ...i,
-    frontmatter: !i.frontmatter
-      ? undefined
-      : i.frontmatter.type === "zod"
+    frontmatter: i.frontmatter
       ? Object.fromEntries(
-          Object.entries(i.frontmatter.records).map(([key, value]) => [
+          Object.entries(i.frontmatter).map(([key, val]) => [
             key,
-            zodToJsonSchema(value),
+            val instanceof z.ZodType ? zodToJsonSchema(val) : val,
           ])
         )
-      : i.frontmatter.schema,
+      : undefined,
   }));
+}
+
+export function serializeCollectionConfig(
+  cfg: Config.Collections
+): InternalConfig.Collections {
+  return transformCollectionConfig(cfg);
 }

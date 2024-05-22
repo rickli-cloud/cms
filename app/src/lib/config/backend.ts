@@ -46,6 +46,11 @@ export const Backend = {
       auth: z.string().or(AuthFunction),
     })
     .and(BaseBackend),
+  serializable: z
+    .object({
+      auth: z.string(),
+    })
+    .and(BaseBackend),
 };
 
 const AsyncFunction: typeof Function = Object.getPrototypeOf(
@@ -61,5 +66,39 @@ export function transformBackendConfig(
       typeof cfg.auth === "function"
         ? cfg.auth
         : (new AsyncFunction("auth", cfg.auth) as z.infer<typeof AuthFunction>),
+  };
+}
+
+function serializeFunction(fn: Function): string {
+  const fnString = fn.toString();
+
+  const fnRegex =
+    /^\s*(async)?\s*(function)?\s*([a-zA-Z0-9]*)\s*\(([a-zA-Z0-9,.{}\(\)]*)\)\s*(=>)?\s*/;
+  if (!fnRegex.test(fnString)) {
+    throw new Error("Cannot identify string as a function :(", {
+      cause: `String of function: "${fnString}" does not match regex: "${fnRegex.source}".`,
+    });
+  }
+  const processedFnString = fnString.replace(fnRegex, "").replace(/\s+/gm, " ");
+
+  const fnContainerRegex = /^\s*{([^]*)}\s*$/;
+  if (fnContainerRegex.test(processedFnString)) {
+    const fnContent = fnContainerRegex.exec(processedFnString);
+    if (!fnContent) throw new Error("Failed to get function content :(");
+    return fnContent[1].trim();
+  }
+
+  console.log("fn does not have cage!", processedFnString);
+
+  return "return " + processedFnString;
+}
+
+export function serializeBackendConfig(
+  cfg: Config.Backend
+): z.infer<typeof Backend.serializable> {
+  return {
+    ...cfg,
+    auth:
+      typeof cfg.auth === "function" ? serializeFunction(cfg.auth) : cfg.auth,
   };
 }

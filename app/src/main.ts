@@ -3,10 +3,19 @@ import "./app.css"; // only works for development.
 import { z } from "zod";
 import Cms from "./App.svelte";
 import auth from "./lib/utils/auth.ts";
-
-import type {
-  Config as config,
-  FullConfig as Config,
+import {
+  serializeConfig,
+  type Config as config,
+  type FullConfig as Config,
+  type SerializableConfig,
 } from "./lib/config/index.ts";
 
-export { Cms, auth, z, type Config, type config };
+export {
+  Cms,
+  auth,
+  serializeConfig,
+  z,
+  type Config,
+  type config,
+  type SerializableConfig,
+};

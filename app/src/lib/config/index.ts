@@ -1,14 +1,39 @@
 import { z } from "zod";
 
-import { Backend } from "./backend.ts";
-import { Collection, File, Folder, Frontmatter } from "./collection.ts";
+import { Backend, serializeBackendConfig } from "./backend.ts";
+import {
+  Collection,
+  File,
+  Folder,
+  Frontmatter,
+  serializeCollectionConfig,
+} from "./collection.ts";
 
 export const config = z.object({
   collections: z.array(Collection.default),
   backend: Backend.default,
 });
 
+export const serializableConfig = z.object({
+  collections: z.array(Collection.serializable),
+  backend: Backend.serializable,
+});
+
+/** Make config serializable using JSON.stringify / JSON.parse. */
+export function serializeConfig(cfg: FullConfig): SerializableConfig {
+  return {
+    collections: serializeCollectionConfig(cfg.collections),
+    backend: serializeBackendConfig(cfg.backend),
+  };
+}
+
+/** Backwards compatibility test */
+export function serializeTest(cfg: SerializableConfig): FullConfig {
+  return cfg;
+}
+
 export type FullConfig = z.infer<typeof config>;
+export type SerializableConfig = z.infer<typeof config>;
 
 export namespace Config {
   export type Backend = z.infer<typeof Backend.default>;
@@ -31,29 +56,3 @@ export namespace InternalConfig {
     export type Frontmatter = z.infer<typeof Frontmatter.internal>;
   }
 }
-
-// import { z } from "zod";
-// import backend from "./backend";
-// // import storage from "./storage";
-// import collection from "./collection";
-// import type { File, Folder, frontmatter } from "./collection";
-
-// export const config = z.object({
-//   collections: z.array(collection),
-//   // storage: storage.default({}),
-//   backend,
-// });
-
-// export namespace Config {
-//   export type Full = z.infer<typeof config>;
-//   export type Backend = z.infer<typeof backend>;
-//   // export type Storage = z.infer<typeof storage>;
-
-//   export namespace Collection {
-//     export type File = z.infer<typeof File>;
-//     export type Folder = z.infer<typeof Folder>;
-//     export type Union = z.infer<typeof collection>;
-//     export type UnionArray = z.infer<Zod.ZodArray<typeof collection>>;
-//     export type Frontmatter = z.infer<typeof frontmatter>;
-//   }
-// }

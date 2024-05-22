@@ -5,7 +5,7 @@ import { resolve } from "node:path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [svelte(), dts()],
+  plugins: [svelte(), dts({})],
   resolve: {
     alias: {
       $lib: resolve(__dirname, "src/lib"),

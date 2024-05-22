@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-import { Backend } from "./backend";
-import { Collection, File, Folder, Frontmatter } from "./collection";
+import { Backend } from "./backend.ts";
+import { Collection, File, Folder, Frontmatter } from "./collection.ts";
 
 export const config = z.object({
   collections: z.array(Collection.default),

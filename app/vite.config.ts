@@ -14,6 +14,7 @@ export default defineConfig({
     },
   },
   build: {
+    outDir: "dist/app",
     lib: {
       entry: resolve(__dirname, "src/main.ts"),
       name: "index",

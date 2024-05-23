@@ -1,17 +1,32 @@
 {
   "name": "@lucarickli/jamstack-cms",
   "private": false,
-  "version": "0.0.1-pre12",
+  "version": "0.0.1-pre13",
   "type": "module",
   "main": "dist/index.umd.js",
   "module": "dist/index.es.js",
   "types": "dist/main.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/app/main.d.ts",
+      "browser": "./dist/app/index.umd.js",
+      "require": "./dist/app/index.umd.js",
+      "import": "./dist/app/index.es.js"
+    },
+    "./utils": {
+      "types": "./dist/utils/utils.d.ts",
+      "import": "./dist/utils/utils.js"
+    },
+    "./utils/*": "./dist/utils/*"
+  },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm-run-all clean build:app build:utils",
+    "build:app": "vite build",
     "build:utils": "tsc src/utils.ts -d --outDir dist/utils --lib es2023 --module es6 --target es2022 --strict --esModuleInterop --skipLibCheck --moduleResolution node",
     "preview": "vite preview",
-    "check": "svelte-check --tsconfig ./tsconfig.json"
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "clean": "rimraf ./dist"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.0.2",
@@ -21,7 +36,9 @@
     "autoprefixer": "^10.4.19",
     "cssnano": "^6.1.2",
     "i": "^0.3.7",
+    "npm-run-all": "^4.1.5",
     "postcss": "^8.4.38",
+    "rimraf": "^5.0.7",
     "svelte": "^4.2.12",
     "svelte-check": "^3.6.7",
     "svelte-preprocess": "^5.1.3",

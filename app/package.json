@@ -1,7 +1,7 @@
 {
   "name": "@lucarickli/jamstack-cms",
   "private": false,
-  "version": "0.0.1-pre13",
+  "version": "0.0.1-pre14",
   "type": "module",
   "main": "dist/index.umd.js",
   "module": "dist/index.es.js",
@@ -21,12 +21,14 @@
   },
   "scripts": {
     "dev": "vite",
+    "check": "npm-run-all check:app check:utils",
     "build": "npm-run-all clean build:app build:utils",
-    "build:app": "vite build",
-    "build:utils": "tsc src/utils.ts -d --outDir dist/utils --lib es2023 --module es6 --target es2022 --strict --esModuleInterop --skipLibCheck --moduleResolution node",
     "preview": "vite preview",
-    "check": "svelte-check --tsconfig ./tsconfig.json",
-    "clean": "rimraf ./dist"
+    "clean": "rimraf ./dist",
+    "check:app": "svelte-check --tsconfig ./tsconfig.json",
+    "build:app": "vite build",
+    "check:utils": "tsc src/utils.ts -d --outDir dist/utils --lib es2023 --module es6 --target es2022 --strict --esModuleInterop --skipLibCheck --moduleResolution node --noEmit",
+    "build:utils": "tsc src/utils.ts -d --outDir dist/utils --lib es2023 --module es6 --target es2022 --strict --esModuleInterop --skipLibCheck --moduleResolution node"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.0.2",

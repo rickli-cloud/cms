@@ -5,7 +5,7 @@ import {
   type Config as config,
   type FullConfig as Config,
   type SerializableConfig,
-} from "./lib/config/index";
+} from "./lib/config/index.js";
 
 export {
   z,

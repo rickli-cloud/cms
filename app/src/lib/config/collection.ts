@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
-import type { Config, InternalConfig } from "./index";
+
+import type { Config, InternalConfig } from "./index.js";
 
 export const Frontmatter = {
   default: z.record(z.any()),

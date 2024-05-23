@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
-import type { Config, InternalConfig } from ".";
+import type { Config, InternalConfig } from "./index";
 
 export const Frontmatter = {
   default: z.record(z.any()),
@@ -75,7 +75,7 @@ export const Collection = {
 export function transformCollectionConfig(
   cfg: Config.Collections
 ): InternalConfig.Collections {
-  return cfg.map((i) => ({
+  return cfg.map((i: Config.Collection) => ({
     ...i,
     frontmatter: i.frontmatter
       ? Object.fromEntries(

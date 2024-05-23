@@ -1,7 +1,7 @@
 {
   "name": "@lucarickli/jamstack-cms",
   "private": false,
-  "version": "0.0.1-pre11",
+  "version": "0.0.1-pre12",
   "type": "module",
   "main": "dist/index.umd.js",
   "module": "dist/index.es.js",
@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:utils": "tsc src/utils.ts -d --outDir dist/utils --lib es2023 --module es6 --target es2022 --strict --esModuleInterop --skipLibCheck --moduleResolution node",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json"
   },

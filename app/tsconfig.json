@@ -13,8 +13,7 @@
      */
     "allowJs": true,
     "allowImportingTsExtensions": true,
-    "composite": false,
-    "emitDeclarationOnly": true,
+    "noEmit": true,
     "checkJs": true,
     "isolatedModules": true,
     "paths": {

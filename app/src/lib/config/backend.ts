@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { Config, InternalConfig } from ".";
+import type { Config, InternalConfig } from "./index";
 
 export const BaseBackend = z.object({
   allow_fork: z.boolean().default(true),

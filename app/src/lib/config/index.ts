@@ -1,13 +1,13 @@
 import { z } from "zod";
 
-import { Backend, serializeBackendConfig } from "./backend.ts";
+import { Backend, serializeBackendConfig } from "./backend";
 import {
   Collection,
   File,
   Folder,
   Frontmatter,
   serializeCollectionConfig,
-} from "./collection.ts";
+} from "./collection";
 
 export const config = z.object({
   collections: z.array(Collection.default),

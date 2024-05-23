@@ -31,6 +31,10 @@ jobs:
         working-directory: app
         run: npm run build
 
+      - name: Build utils
+        working-directory: app
+        run: npm run build:utils
+
       - name: Publish package
         working-directory: app
         run: npm publish --access=public

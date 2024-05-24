@@ -1,7 +1,7 @@
 {
   "name": "static-cms-oauth",
   "author": "rickli-cloud",
-  "version": "0.0.1",
+  "version": "0.0.0-latest",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

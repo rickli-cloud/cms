@@ -1,7 +1,7 @@
 {
   "name": "@lucarickli/jamstack-cms-astro",
   "private": false,
-  "version": "latest",
+  "version": "0.0.0-latest",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",

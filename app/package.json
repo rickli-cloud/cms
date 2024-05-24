@@ -9,7 +9,6 @@
   "exports": {
     ".": {
       "types": "./dist/app/main.d.ts",
-      "browser": "./dist/app/index.umd.js",
       "require": "./dist/app/index.umd.js",
       "import": "./dist/app/index.es.js"
     },

@@ -27,16 +27,51 @@ jobs:
         working-directory: app
         run: npm ci
 
+      - name: Patch version
+        working-directory: app
+        run: npm version ${{ github.ref_name }}
+
       - name: Build package
         working-directory: app
         run: npm run build
 
-      - name: Build utils
-        working-directory: app
-        run: npm run build:utils
-
       - name: Publish package
         working-directory: app
+        run: npm publish --access=public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  astro-plugin:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: |
+            astro-plugin
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        working-directory: astro-plugin
+        run: npm ci
+
+      - name: Patch version
+        working-directory: astro-plugin
+        run: npm version ${{ github.ref_name }}
+
+      - name: Build package
+        working-directory: astro-plugin
+        run: npm run build
+
+      - name: Publish package
+        working-directory: astro-plugin
         run: npm publish --access=public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

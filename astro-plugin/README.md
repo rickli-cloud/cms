@@ -1,0 +1,1 @@
+# Jamstack CMS astro plugin

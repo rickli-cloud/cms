@@ -7,7 +7,7 @@ import { AccessLog, Log } from "./log";
 import { OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, PORT } from "./config";
 import { generateScript } from "./loginScript";
 import { AddressInfo } from "node:net";
-import { promisify } from "node:util";
+// import { promisify } from "node:util";
 
 // const applyHelmetHeaders = helmet({
 //   contentSecurityPolicy: {

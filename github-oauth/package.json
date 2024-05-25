@@ -1,5 +1,5 @@
 {
-  "name": "static-cms-oauth",
+  "name": "jamstack-cms-oauth",
   "author": "rickli-cloud",
   "version": "0.0.0-latest",
   "main": "index.js",
@@ -8,7 +8,8 @@
     "dev": "LOG_LEVEL=all ACCESS_LOG_LEVEL=debug NODE_ENV=development webpack",
     "dev:debug": "DEBUG=\"*\" LOG_LEVEL=debug NODE_ENV=development webpack",
     "build": "webpack",
-    "start": "NODE_ENV=production node dist/index.js"
+    "start": "NODE_ENV=production node dist/index.js",
+    "check": "tsc --noEmit"
   },
   "devDependencies": {
     "@tsconfig/node18": "^2.0.0",

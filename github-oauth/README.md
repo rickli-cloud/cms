@@ -1,6 +1,6 @@
-# Static CMS OAuth
+# GitHub OAuth
 
-Nodejs http server to enable login thru GitHub's oauth flow for [rickli-cloud/cms](https://github.com/rickli-cloud/cms).
+Nodejs http server (http no express) to enable login thru GitHub's oauth flow with window to window communication capabilities.
 
 ## Environment
 

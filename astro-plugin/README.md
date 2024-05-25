@@ -42,28 +42,8 @@ export default defineConfig({
 npm run dev
 ```
 
-### Dev + debug
-
-```sh
-npm run dev:debug
-```
-
 ### Build
 
 ```sh
 npm run build
-```
-
-### Start
-
-> This requires a build of the app!
-
-```sh
-npm run start
-```
-
-### Run checks
-
-```sh
-npm run check
 ```

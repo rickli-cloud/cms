@@ -41,3 +41,9 @@ npm run build
 ```sh
 npm run start
 ```
+
+### Run checks
+
+```sh
+npm run check
+```

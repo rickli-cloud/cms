@@ -14,39 +14,38 @@
   <body>
     <div id="app"></div>
     <script type="module">
-      import { Cms, z, auth } from "./src/main.ts";
+      import Cms, { z } from "./src/main.ts";
 
-      const cms = new Cms({
-        target: document.getElementById("app"),
-        props: {
+      const cms = new Cms(
+        {
           backend: {
             force_auth: false,
             git: {
               repo: "rickli-cloud",
               owner: "rickli-cloud",
             },
-            auth: () =>
-              auth.githubOAuth("ef878b46674dd92c73ad", auth.urlParameter()),
+            auth: (auth) => {
+              return auth.githubOAuth(
+                "ef878b46674dd92c73ad",
+                auth.urlParameter()
+              );
+            },
             // auth: 'return auth.githubOAuth("ef878b46674dd92c73ad", auth.urlParameter())',
           },
           collections: [
             {
               type: "dir",
               name: "Blog",
-              path: "src/content/blog",
+              path: "app/src/content/blog",
               actions: {
                 create: true,
                 delete: true,
               },
               frontmatter: {
-                type: "zod",
-                records: {
-                  title: z.string({ description: undefined }),
-                  description: z.string().optional(),
-                  heroImage: z.string().optional(),
-                  pubDate: z.date().default(() => new Date(Date.now())),
-                },
-
+                title: z.string({ description: undefined }),
+                description: z.string().optional(),
+                heroImage: z.string().optional(),
+                pubDate: z.date().default(() => new Date(Date.now())),
                 /*  test: z.string().readonly().optional(),
                 num: z.number().default(99),
                 num1: z.number(),
@@ -68,7 +67,8 @@
             },
           ],
         },
-      });
+        document.getElementById("app")
+      );
     </script>
   </body>
 </html>

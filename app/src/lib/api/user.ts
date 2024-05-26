@@ -6,6 +6,7 @@ export interface UserData {
   login: string;
   name: string | null;
   avatar_url: string;
+  html_url: string;
 }
 
 export async function getUser(): Promise<UserData> {

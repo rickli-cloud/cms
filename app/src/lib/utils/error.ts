@@ -1,28 +1,22 @@
-export interface CustomErrorArgs {
-  name?: string;
-  title?: string;
-  cause?: unknown;
-  action?: {
-    name: string;
-    call: () => void;
-  };
-  disableStack?: boolean;
-  disableCause?: boolean;
+interface AppErr extends Omit<Omit<ApplicationError, "name">, "message"> {
+  readonly name?: string;
 }
 
-export class CustomError extends Error {
+export class ApplicationError extends Error {
   public readonly name: string;
-  public readonly title?: CustomErrorArgs["title"];
-  public readonly disableStack?: CustomErrorArgs["disableStack"];
-  public readonly disableCause?: CustomErrorArgs["disableCause"];
-  public readonly action?: CustomErrorArgs["action"];
+  public readonly message: string;
+  public readonly cause: unknown;
+  public readonly actions?: { name: string; call: () => void }[];
+  public readonly disableStack?: boolean;
+  public readonly disableCause?: boolean;
 
-  public constructor(message: string, args: CustomErrorArgs = {}) {
-    super(message, { cause: args.disableCause ? undefined : args.cause });
-    this.name = args.name || "ApplicationError";
-    this.title = args.title;
-    this.action = args.action;
-    this.disableStack = args.disableStack;
-    this.disableCause = args.disableCause;
+  public constructor(msg: string, args?: AppErr) {
+    super(msg, { cause: args?.disableCause ? undefined : args?.cause });
+    this.name = args?.name || "Application error";
+    this.message = msg;
+    this.cause = args?.cause;
+    this.actions = args?.actions;
+    this.disableStack = args?.disableStack;
+    this.disableCause = args?.disableCause;
   }
 }

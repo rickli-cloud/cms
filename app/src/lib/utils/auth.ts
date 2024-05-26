@@ -11,9 +11,10 @@ export const urlParameter: z.infer<typeof AuthMethods.urlParameter> = ():
   function handleParams(search: string, isHash?: boolean): string | undefined {
     const params = new URLSearchParams(search);
 
+    console.log({ params });
+
     if (params.has("token")) {
       const token = params.get("token") as string;
-
       params.delete("token");
 
       const url = new URL(window.location.toString());

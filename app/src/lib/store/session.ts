@@ -2,13 +2,13 @@ import { get, writable } from "svelte/store";
 import { RequestError } from "@octokit/request-error";
 
 import { Backend /* Storage */ } from "./config";
-import { CustomError } from "$lib/utils/error";
+import { ApplicationError } from "$lib/utils/error";
 import { getUser, type UserData } from "$lib/api/user";
 import { initApi } from "$lib/api";
 import Auth from "$lib/utils/auth";
 
 export const User = writable<UserData | undefined>(undefined);
-// User.subscribe(console.log);
+User.subscribe(console.log);
 
 export const storageKey = "cms:session:token";
 
@@ -18,7 +18,7 @@ export async function initUser(token?: string | null) {
   const { auth, git } = get(Backend);
   // const { session: storage } = get(Storage);
 
-  if (!token) {
+  if (!token && token !== null) {
     token = sessionStorage.getItem(storageKey);
   }
 
@@ -37,17 +37,20 @@ export async function initUser(token?: string | null) {
 
   User.set(
     await getUser().catch((err) => {
-      if (!(err instanceof RequestError) || err.status !== 401) throw err;
+      if (err instanceof RequestError && err.status !== 401) {
+        throw new ApplicationError("Bad credentials", {
+          disableStack: true,
+          cause: err,
+          actions: [
+            {
+              name: "Retry",
+              call: () => window.location.reload(),
+            },
+          ],
+        });
+      }
 
-      throw new CustomError("Bad credentials", {
-        title: "Failed to log in user!",
-        disableStack: true,
-        action: {
-          name: "Retry",
-          call: () => window.location.reload(),
-        },
-        cause: err,
-      });
+      throw err;
     })
   );
 

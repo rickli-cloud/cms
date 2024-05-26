@@ -29,7 +29,9 @@
     "check:app": "svelte-check --tsconfig ./tsconfig.json",
     "build:app": "vite build",
     "check:utils": "tsc src/utils.ts -d --outDir dist/utils --lib es2023 --module es6 --target es2022 --strict --esModuleInterop --skipLibCheck --moduleResolution node --noEmit",
-    "build:utils": "tsc src/utils.ts -d --outDir dist/utils --lib es2023 --module es6 --target es2022 --strict --esModuleInterop --skipLibCheck --moduleResolution node"
+    "build:utils": "tsc src/utils.ts -d --outDir dist/utils --lib es2023 --module es6 --target es2022 --strict --esModuleInterop --skipLibCheck --moduleResolution node",
+    "docs": "typedoc src/main.ts --validation.notExported false",
+    "docs:utils": "typedoc src/utils.ts --validation.notExported false"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.0.2",
@@ -47,13 +49,15 @@
     "svelte-preprocess": "^5.1.3",
     "tailwindcss": "^3.4.3",
     "tslib": "^2.6.2",
+    "typedoc": "^0.25.13",
+    "typedoc-plugin-zod": "^1.1.2",
     "typescript": "^5.2.2",
     "vite": "^5.2.0",
     "vite-plugin-dts": "^3.9.1"
   },
   "dependencies": {
     "@octokit/oauth-methods": "^5.1.2",
-    "@octokit/request-error": "^6.1.0",
+    "@octokit/request-error": "^5.1.0",
     "@octokit/rest": "^20.1.0",
     "bits-ui": "^0.21.7",
     "clsx": "^2.1.0",

@@ -32,7 +32,6 @@ export async function handleOctoPromise<
     })
     .catch((err) => {
       if (!(err instanceof RequestError)) throw err;
-
       if (err.status === 401) endSession();
 
       const handle = codes[err.status];

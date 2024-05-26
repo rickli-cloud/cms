@@ -1,17 +1,17 @@
 <script lang="ts">
   import { writable, get, type Writable } from "svelte/store";
   import type { IScrollEvent } from "monaco-editor";
+  // import HamburgerMenu from "svelte-radix/HamburgerMenu.svelte"
 
   import * as Resizable from "$lib/components/ui/resizable/index.js";
-  import * as Sheet from "$lib/components/ui/sheet/index.js";
-  import { Button } from "$lib/components/ui/button/index.js";
+  // import * as Sheet from "$lib/components/ui/sheet/index.js";
+  // import { Button } from "$lib/components/ui/button/index.js";
   // import { Input } from "$lib/components/ui/input/index.js";
   // import { Label } from "$lib/components/ui/label/index.js";
 
-  import HamburgerMenu from "svelte-radix/HamburgerMenu.svelte"
 
   import ErrorComponent from "$lib/components/error/ErrorComponent.svelte";
-  import FrontmatterForm from "$lib/components/editor/Frontmatter.svelte";
+  // import FrontmatterForm from "$lib/components/editor/Frontmatter.svelte";
   import Markdown from "$lib/components/editor/Markdown.svelte";
   import Loading from "$lib/components/site/Loading.svelte";
   import Editor from "$lib/components/editor/MonacoEditor.svelte";
@@ -21,6 +21,7 @@
   import { Base64 } from "$lib/utils/base64";
   import { getContent } from "$lib/api/repo";
   import { Collections } from "$lib/store/config";
+  import type { Config } from "$lib/config";
 
   export let params: { ref: string };
   let customStyleClass: string =  "cms-typography"
@@ -32,6 +33,7 @@
     )
   }
 
+  const Collection = writable<Config.Collection | undefined>()
   const Content = writable<string>("");
   const Metadata = writable<Record<string, Writable<unknown>>>();
   Metadata.subscribe(console.debug)
@@ -51,6 +53,7 @@
 
     const collection = get(Collections).find(({ name }) => name === parsed.collection)
     if (!collection) return undefined
+    Collection.set(collection)
 
     const file = await getContent(parsed.path);
     console.debug({ file })
@@ -84,58 +87,38 @@
 
 </script>
 
-<Header position="fixed" disableContainer disableNav />
+<Header position="fixed" disableContainer disableNav>
+  <div slot="sheet">123</div>
+</Header>
 
 {#await init()}
-  <!-- <Sheet.Content>
-    <Loading />
-  </Sheet.Content> -->
   <Loading />
 {:then data}
-  <!-- <Sheet.Content side="right" class="overflow-y-scroll">
-    <Sheet.Header class="mb-3">
-      <Sheet.Title>Metadata</Sheet.Title>
-      <Sheet.Description>
-        Make changes to metadata. This includes custom fields defined in your collection config.
-      </Sheet.Description>
-    </Sheet.Header>
-
-    <form action="">
-      {#if data?.metadataSchema}
-        <FrontmatterForm data={$Metadata} schema={data?.metadataSchema} />
-      {/if}
-    </form>
-
-    <Sheet.Footer class="mt-3">
-      <Sheet.Close asChild let:builder>
-        <Button builders={[builder]} type="submit">Save changes</Button>
-      </Sheet.Close>
-    </Sheet.Footer>
-  </Sheet.Content> -->
-
-  <Resizable.PaneGroup direction="horizontal" class="pt-14">
-    <Resizable.Pane>
-      <Editor 
-        {Content}
-        on:scroll={(ev) => syncScroll(ev, previewNode)}
-      />
-    </Resizable.Pane>
-    
-    <Resizable.Handle />
-
-    <Resizable.Pane>
-      <div 
-        class="h-full overflow-y-scroll overflow-x-hidden break-word py-1 px-3 {customStyleClass}"
-        class:minimal-prose={!customStyleClass}
-        bind:this={previewNode}
-      >
-        <Markdown {Content} />
-        <div class="h-full" />
-      </div>
-    </Resizable.Pane>
-  </Resizable.PaneGroup>
+  <main>
+    <Resizable.PaneGroup direction="horizontal" class="pt-14">
+      <Resizable.Pane>
+        <Editor 
+          {Content}
+          on:scroll={(ev) => syncScroll(ev, previewNode)}
+        />
+      </Resizable.Pane>
+      <Resizable.Handle />
+      <Resizable.Pane>
+        <div 
+          class="h-full overflow-y-scroll overflow-x-hidden break-word py-1 px-3 {customStyleClass}"
+          class:minimal-prose={!customStyleClass}
+          bind:this={previewNode}
+        >
+          <Markdown {Content} />
+          <div class="h-full" />
+        </div>
+      </Resizable.Pane>
+    </Resizable.PaneGroup>
+  </main>
 {:catch err}
   <main class="container">
-    <ErrorComponent {err} />
+    <section class="grid-full">
+      <ErrorComponent {err} />
+    </section>
   </main>
 {/await}

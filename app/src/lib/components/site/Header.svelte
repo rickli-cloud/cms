@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Enter, Exit, HamburgerMenu } from "svelte-radix";
+  import { Enter, Exit, HamburgerMenu, Person } from "svelte-radix";
 
   import * as Avatar from "$lib/components/ui/avatar";
   import * as Sheet from "$lib/components/ui/sheet";
@@ -71,21 +71,28 @@
       style="-ms-overflow-style: none !important; scrollbar-width: none !important;"
     >
       {#if !disableProfile}
-        <div class="h-16 bg-muted -m-6 mb-0" />
-        <!-- <Separator /> -->
+        <div class="h-16 bg-muted shadow-md -m-6 mb-0" />
 
-        <div class="flex gap-3 -mt-12">
+        <div class="flex gap-3 -mt-12 mb-4">
           <Avatar.Root class="h-24 w-24 rounded-full">
             <Avatar.Image src={$User?.avatar_url} alt="@{$User?.login}" title={$User?.login} />
             <Avatar.Fallback>?</Avatar.Fallback>
           </Avatar.Root>
 
           <div class="grid grid-rows-2 gap-1">
-            <p class="text-lg font-semibold self-end">
-              {$User?.name || $User?.login || "Anonymous"}
-            </p>
+            <div class="flex gap-1.5 items-end whitespace-nowrap">
+              <p class="text-lg font-semibold">
+                {$User?.name || $User?.login || "Anonymous"}
+              </p>
 
-            <div class="flex gap-2 items-center pb-4">
+              {#if $User}
+                <a href={$User?.html_url} class="text-muted-foreground hover:text-current text-xs mb-1.5">
+                  @{$User?.login}
+                </a>
+              {/if}
+            </div>
+
+            <div class="flex gap-1 items-center pb-4">
               {#if $User}                
                 <AlertDialog.Root>
                   <AlertDialog.Trigger asChild let:builder>
@@ -129,17 +136,12 @@
                   Login
                 </Button>
               {/if}
-
-              <!-- <button 
-                class="text-muted-foreground hover:text-current inline-flex items-center gap-1.5 my-0.5"
-              >
-                <Exit class="h-4 w-4" />
-                Exit
-              </button> -->
             </div>
           </div>
         </div>
       {/if}
+
+      <slot name="sheet" />
     </Sheet.Content>
   </Sheet.Root>
 </header>

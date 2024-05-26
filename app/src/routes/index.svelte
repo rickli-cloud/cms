@@ -1,12 +1,14 @@
 <script lang="ts">
-  import * as Card from "$lib/components/ui/card"
+  // import * as Card from "$lib/components/ui/card"
   import * as Avatar from "$lib/components/ui/avatar"
+  import * as Card from "$lib/components/ui/card"
   import Header from "$lib/components/site/Header.svelte"
   import Loading from "$lib/components/site/Loading.svelte";
   import ErrorComponent from "$lib/components/error/ErrorComponent.svelte";
-  import { getCommits, getContributors } from "$lib/api/repo";
   import CommitTimeline from "$lib/components/commitTimeline/CommitTimeline.svelte";
   // import ActivityGrid from "$lib/components/activityGrid/ActivityGrid.svelte";
+
+  import { getCommits, getContributors } from "$lib/api/repo";
 
   async function init() {
     const [ contributors, commits ] = await Promise.all([
@@ -40,14 +42,6 @@
 
     {#if data.contributors}
       <section class="grid-full md:!grid-nav">
-        <h3 class="scroll-m-20 text-2xl font-semibold tracking-tight">
-          Contributors
-        </h3>
-
-        <p class="text-sm text-muted-foreground">
-          Anyone that published a change will show up here.
-        </p>
-
         {#each data.contributors as contributor}
           <div class="flex items-center space-x-2 first:mt-5 mt-3">
             <Avatar.Root class="rounded-sm">
@@ -97,6 +91,8 @@
     <div></div>
 
   {:catch err}
-    <ErrorComponent {err} />
+    <section class="grid-full">
+      <ErrorComponent {err} />
+    </section>
   {/await}
 </main>

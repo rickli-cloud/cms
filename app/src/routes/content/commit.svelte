@@ -7,6 +7,7 @@
   import Header from "$lib/components/site/Header.svelte";
   import Loading from "$lib/components/site/Loading.svelte";
   import MonacoEditor from "$lib/components/editor/MonacoEditor.svelte"
+  import ErrorComponent from "$lib/components/error/ErrorComponent.svelte";
 
   import { getCommitDetail } from "$lib/api/repo";
   import { commitFileRef, Ref, type CommitFileRef } from "$lib/utils/ref";
@@ -68,12 +69,10 @@
   </section>
   {/if}
 
-
   {#await init()}
     <Loading />
   {:then data}
   {#if data}
-
     <section class="grid-full mt-3 mb-6">
       <div class="flex gap-2 items-center">
         <Avatar.Root class="h-6 w-6 rounded-sm">
@@ -138,6 +137,10 @@
       {JSON.stringify(data, null, 4)}
     </div>
   {/if}
+  {:catch err}
+    <section class="grid-full">
+      <ErrorComponent {err} />
+    </section>
   {/await}
 </main>
 

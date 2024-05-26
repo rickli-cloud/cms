@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createTable, Render, Subscribe, createRender } from "svelte-headless-table";
   import { addPagination, addSelectedRows } from "svelte-headless-table/plugins";
-  import type { Writable } from "svelte/store";
+  import { get, type Writable } from "svelte/store";
 
   import * as Table from "$lib/components/ui/table";
   import { Button } from "$lib/components/ui/button";
@@ -111,10 +111,18 @@
   <Table.Body {...$tableBodyAttrs}>
     {#each $pageRows as row (row.id)}
       <Subscribe rowAttrs={row.attrs()} let:rowAttrs>
-        <Table.Row {...rowAttrs} data-state={$selectedDataIds[row.id] && "selected"}>
+        <Table.Row 
+          {...rowAttrs} 
+          data-state={$selectedDataIds[row.id] && "selected"}
+          class="cursor-pointer"
+          on:click={(ev) => {
+            const state = row.state?.pluginStates.select.getRowState(row);
+            state?.isSelected.set(!get(state?.isSelected));
+          }}
+        >
           {#each row.cells as cell (cell.id)}
             <Subscribe attrs={cell.attrs()} let:attrs>
-              <Table.Cell {...attrs}>
+              <Table.Cell {...attrs} >
                 {#if cell.id === "amount"}
                   <div class="text-right font-medium">
                     <Render of={cell.render()} />

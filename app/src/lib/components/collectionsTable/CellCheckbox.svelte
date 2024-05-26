@@ -5,5 +5,5 @@
   export let checked: Writable<boolean>;
 </script>
  
-<Checkbox bind:checked={$checked} />
+<Checkbox bind:checked={$checked} on:click={(ev) => ev.preventDefault()} />
 

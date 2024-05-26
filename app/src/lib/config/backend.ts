@@ -89,8 +89,6 @@ function serializeFunction(fn: Function): string {
     return fnContent[1].trim();
   }
 
-  console.log("fn does not have cage!", processedFnString);
-
   return "return " + processedFnString;
 }
 

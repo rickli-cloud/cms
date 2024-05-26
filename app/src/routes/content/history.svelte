@@ -181,10 +181,10 @@
     </Card.Root> -->
 
     <!-- <div class="break-words overflow-x-hidden grid-full">{JSON.stringify(data, null, 2)}</div> -->
-  {:else}
-    <div>404</div>
   {/if}
   {:catch err}
-    <ErrorComponent {err} />
+    <section class="grid-full">
+      <ErrorComponent {err} />
+    </section>
   {/await}
 </main>

@@ -6,18 +6,13 @@ import "@lucarickli/jamstack-cms/dist/style.css";
 <html lang="en">
   <head>
     <title>Jamstack CMS</title>
-    <meta
-      name="description"
-      content="Admin dashboard for managing website content"
-      />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Content management system">
     <script>
       import config from "virtual:jamstack-cms"; 
-      import { Cms } from "@lucarickli/jamstack-cms";
-      new Cms({ 
-        target: document.getElementById("app"),
-        props: config, 
-      });
-      console.debug({ config })
+      import Cms from "@lucarickli/jamstack-cms";
+      new Cms(config, document.getElementById("app"));
     </script>
   </head>
   <body>
